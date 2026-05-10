@@ -2,10 +2,12 @@ import random
 import time
 
 cnt = 0
+life = 3
 
 #function for operations
 def ask_quest(n1,n2,op):
     global cnt
+    global life
 
     if op == "+":
         correct = n1 + n2
@@ -22,7 +24,7 @@ def ask_quest(n1,n2,op):
 #checking if input is digit
 #if not it would return previous operation
     while True:
-        a = str(input(f"{n1} {op} {n2} ="))
+        a = str(input(f"{n1} {op} {n2} = "))
 
         if not a.isdigit():
             print("숫자를 입력하십시오!")
@@ -36,9 +38,12 @@ def ask_quest(n1,n2,op):
         cnt += 1
     else:
         print("틀렸습니다.")
+        if b == 4:
+            life -= 1
+            print(f"You lost one life! Remaining lives: {life}")
 
 while True:
-    b = input("Choose difficulty(1(easy),2(normal),3(hard))")
+    b = input("Choose difficulty(1(easy),2(normal),3(hard)),4(endless mode)")
 
     if not b.isdigit():
         print("숫자를 입력해 주세요.")
@@ -46,47 +51,86 @@ while True:
 
     b = int(b)
 
-    if b not in [1,2,3]:
-        print("1,2,3 중에서 선택해 주세요.")
+    if b not in [1,2,3,4]:
+        print("1,2,3,4 중에서 선택해 주세요.")
         continue
     break
 
+#function if user chooses one of the difficulties
+def func_for_difficulties():
+    start = time.perf_counter()
+    for _ in range(5):
+        while True:
+            operation = random.choice(["+", "-", "x", "/"])
+            if b == 2:
+                if operation in ["+", "-"]:
+                    n1 = random.randint(low, high)
+                    n2 = random.randint(low, high)
+                else:
+                    n1 = random.randint(2, 9)
+                    n2 = random.randint(2, 9)
+            else:
+                n1 = random.randint(low, high)
+                n2 = random.randint(low, high)
+            if operation == '-' and n1 < n2:
+                continue
+            if operation == '/' and n1 % n2 != 0:
+                continue
+            break
+        ask_quest(n1, n2, operation)
+    end = time.perf_counter()
+
+    if cnt == 5:
+        print("축하합니다. 면접입니다!")
+    elif 0 < cnt < 5:
+        print(f"5문제에서 {cnt}개 맞췄습니다.")
+    else:
+        print("모두 들렸습니다!")
+
+    print(f"(총 소요시간 {round(end - start, 2)} 초)")
+
+#function for endless mode(4)
+def endless_mode():
+    start = time.perf_counter()
+    while True:
+        #scaling for low,high. So user would feel progression
+        low = 1+ cnt // 10
+        high = 10 + cnt * 5
+        while True:
+            operation = random.choice(["+", "-", "x", "/"])
+            if b == 2:
+                if operation in ["+", "-"]:
+                    n1 = random.randint(low, high)
+                    n2 = random.randint(low, high)
+                else:
+                    n1 = random.randint(2, 9)
+                    n2 = random.randint(2, 9)
+            else:
+                n1 = random.randint(low, high)
+                n2 = random.randint(low, high)
+            if operation == '-' and n1 < n2:
+                continue
+            if operation == '/' and n1 % n2 != 0:
+                continue
+            break
+        if life > 0:
+            ask_quest(n1, n2, operation)
+        else:
+            break
+    end = time.perf_counter()
+    if life == 0:
+        print(f"게임오버! Your score is {cnt}!")
+        print(f"(총 소요시간 {round(end - start, 2)} 초)")
+
+
 if b == 1:
     low,high = 1,10
+    func_for_difficulties()
 elif b == 2:
     low,high = 1,100
+    func_for_difficulties()
 elif b == 3:
     low,high = 10,200
-start = time.perf_counter()
-
-for _ in range(5):
-    while True:
-        operation = random.choice(["+","-","x","/"])
-        if b == 2:
-            if operation in ["+","-"]:
-                n1 = random.randint(low,high)
-                n2 = random.randint(low,high)
-            else:
-                n1 = random.randint(2,9)
-                n2 = random.randint(2,9)
-        else:
-            n1 = random.randint(low,high)
-            n2 = random.randint(low,high)
-        if operation == '-' and n1 < n2:
-            continue
-        if operation == '/' and n1 % n2 !=0:
-            continue
-
-        break
-    ask_quest(n1, n2, operation)
-
-end = time.perf_counter()
-
-if cnt == 5:
-    print("축하합니다. 면접입니다!")
-elif 0 < cnt < 5:
-    print(f"5문제에서 {cnt}개 맞췄습니다.")
-else:
-    print("모두 들렸습니다!")
-
-print(f"(총 소요시간 {round(end-start,2)} 초)")
+    func_for_difficulties()
+elif b == 4:
+    endless_mode()
