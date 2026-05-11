@@ -40,6 +40,7 @@ def ask_quest(n1,n2,op):
         print("틀렸습니다.")
         if b == 4:
             life -= 1
+            print(f"Correct answer was {correct}")
             print(f"You lost one life! Remaining lives: {life}")
 
 while True:
