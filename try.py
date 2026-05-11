@@ -3,6 +3,8 @@ import time
 
 cnt = 0
 life = 3
+res = 0
+var = 0
 
 #function for operations
 def ask_quest(n1,n2,op):
@@ -36,6 +38,13 @@ def ask_quest(n1,n2,op):
     if a == correct:
         print("정답입니다!")
         cnt += 1
+        if b == 4:
+            if var< 5:
+                print("Perfect score!")
+            elif var <10:
+                print("Good score!")
+            else:
+                print("Bad Score!")
     else:
         print("틀렸습니다.")
         if b == 4:
@@ -92,8 +101,10 @@ def func_for_difficulties():
 
 #function for endless mode(4)
 def endless_mode():
-    start = time.perf_counter()
+    global res
+    global var
     while True:
+        start = time.perf_counter()
         #scaling for low,high. So user would feel progression
         low = 1+ cnt // 10
         high = 10 + cnt * 5
@@ -118,10 +129,12 @@ def endless_mode():
             ask_quest(n1, n2, operation)
         else:
             break
-    end = time.perf_counter()
+        end = time.perf_counter()
+        res += round(end-start,2)
+        var = round(end-start,2)
     if life == 0:
         print(f"게임오버! Your score is {cnt}!")
-        print(f"(총 소요시간 {round(end - start, 2)} 초)")
+        print(f"(총 소요시간 {res} 초)")
 
 
 if b == 1:
