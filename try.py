@@ -84,7 +84,7 @@ def func_for_difficulties():
                 n2 = random.randint(low, high)
             if operation == '-' and n1 < n2:
                 continue
-            if operation == '/' and n1 % n2 != 0:
+            if operation == '/' and n1 % n2 != 0 and n2 == 0:
                 continue
             break
         ask_quest(n1, n2, operation)
