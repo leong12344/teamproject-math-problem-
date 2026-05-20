@@ -1,5 +1,7 @@
 import time
 import random
+import csv
+import os
 
 cnt = 0       # correct answer count
 total_q = 0   # total questions asked (for endless mode)
@@ -8,10 +10,83 @@ res = 0 #total tim
 var = 0 #time for score
 scr = 0 # score
 
+#function for saving score into csv file
+def save_score():
+    filename = "score.csv"
+
+    if not os.path.exists(filename): #if file does not exist
+        with open(filename, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["Difficulty","Score","Time","Count"])
+
+    rows = []
+    score_for_dif_exist = False
+
+    with open(filename, "r") as f: #open file
+        reader = csv.reader(f)
+        header = next(reader)
+        rows.append(header)
+
+        #checking if difficulty exists and updating best score, time, and count, instead of adding new rows infinitely
+        for row in reader:
+            difficulty = row[0]
+            best_score = int(row[1])
+            best_time = float(row[2])
+            best_count = int(row[3])
+
+            if difficulty == str(b):
+                score_for_dif_exist = True
+                if scr > best_score:
+                    best_score = scr
+                if cnt >= best_count:
+                    best_count = cnt
+                    if res < best_time:
+                        best_time = res
+                row = [difficulty,best_score,best_time,best_count]
+            rows.append(row)
+
+    #if difficulty does not exist, add new row
+    if not score_for_dif_exist:
+        rows.append([str(b),scr,res,cnt])
+
+    with open(filename, "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerows(rows)
+
+#function for printing best score, time, and count
+def print_score():
+    filename = "score.csv"
+    rows = []
+
+    #if file does not exist, this function will return None
+    #without it program will return error
+    if not os.path.exists(filename):
+        return None
+
+    with open(filename, "r") as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        rows.append(header)
+
+        for row in reader:
+            difficulty = row[0]
+            best_score = int(row[1])
+            best_time = float(row[2])
+            best_count = int(row[3])
+            if difficulty == []:
+                break
+            if difficulty == str(b):
+                print(f"Your best time: {best_time}")
+                if b == 4: #for endless mode
+                    print(f"Your best score: {best_score}\n")
+                else: #for difficulties
+                    print(f"Your best score: {best_count}\n")
+
+
 def ask_quest(n1, n2, n3):
     global cnt, life, scr, var, total_q
 
-    correct = n1 * n2 * n3
+    correct = n1 * n2 * n3 #adding it for 3 difficulty and endless mode
 
     start = time.perf_counter()
 
@@ -55,12 +130,12 @@ def ask_quest(n1, n2, n3):
                 scr += 1
     else:
         print("틀렸습니다.")
+        print(f"Correct answer was {correct}")
         if b == 4:
             life -= 1
-            print(f"Correct answer was {correct}")
             print(f"You lost one life! Remaining lives: {life}")
 
-
+#function for difficulties in game
 def func_for_diff():
     global res
     start = time.perf_counter()
@@ -78,20 +153,21 @@ def func_for_diff():
     else:
         print("모두 틀렸습니다!")
 
-    print(f"(총 소요시간 {round(end - start, 2)} 초)")
+    res = round(end - start, 2)
+    print(f"(총 소요시간 {res} 초)")
 
 
 def endless_mode():
-    global res, scr, life
+    global res, scr, life,total_q,var
 
     print("=========== ENDLESS MODE ============")
     print("You have 3 lives")
 
     while life > 0:
-        if cnt < 10:
+        if total_q < 10:
             low, high = 1, 10      # Easy: 1–10
             n3 = 1                 # 2-number multiplication
-        elif cnt < 30:
+        elif total_q < 30:
             low, high = 1, 20     # Normal: 1–20
             n3 = 1                 # 2-number multiplication
         else:
@@ -102,7 +178,7 @@ def endless_mode():
         n2 = random.randint(low, high)
 
         ask_quest(n1, n2, n3)
-        res += var
+        res += round(var,2)
 
     print("\n게임오버!")
     print(f"You answered {total_q} questions.")
@@ -128,12 +204,20 @@ while True:
 
 if b == 1:
     low, high = 1, 10
+    print_score()
     func_for_diff()
+    save_score()
 elif b == 2:
     low, high = 1, 20
+    print_score()
     func_for_diff()
+    save_score()
 elif b == 3:
     low, high = 1, 20
+    print_score()
     func_for_diff()
+    save_score()
 elif b == 4:
+    print_score()
     endless_mode()
+    save_score()
