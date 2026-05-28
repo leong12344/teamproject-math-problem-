@@ -3,11 +3,11 @@ import random
 import csv
 import os
 
-cnt = 0       # correct answer count
-total_q = 0   # total questions asked (for endless mode)
+cnt = 0       # correct answer count (only for difficulties)
+total_q = 0   # total questions asked (for endless mode) regardless of correct answer
 life = 3 #lives
-res = 0 #total tim
-var = 0 #time for score
+res = 0 #total time (total time of all game)
+var = 0 #time for score(time between the answers)(for score)
 scr = 0 # score
 
 #function for saving score into csv file
@@ -91,7 +91,7 @@ def ask_quest(n1, n2, n3):
     start = time.perf_counter()
 
     while True:
-        if b == 3 or (b == 4 and n3 > 1):
+        if b == 3 or (b == 4 and n3 > 1): #only working if difficulty is 3 or 4 and n3 is bigger then 1
             a = str(input(f"{n1} x {n2} x {n3} = "))
         else:
             a = str(input(f"{n1} x {n2} = "))
@@ -110,7 +110,7 @@ def ask_quest(n1, n2, n3):
 
     if a == correct:
         print("정답입니다.")
-        cnt += 1
+        cnt += 1 #for difficulties
         if b == 4:
             if cnt < 10:  # Easy: generous time limits
                 perfect, good = 3, 6
@@ -119,7 +119,7 @@ def ask_quest(n1, n2, n3):
             else:  # Hard: tight time limits
                 perfect, good = 8, 13
 
-            if var < perfect:
+            if var < perfect: #if the time limit above is smaller then the time to answer get score
                 print("Perfect score!")
                 scr += 10
             elif var < good:
@@ -132,7 +132,7 @@ def ask_quest(n1, n2, n3):
         print("틀렸습니다.")
         print(f"Correct answer was {correct}")
         if b == 4:
-            life -= 1
+            life -= 1 #lives logic
             print(f"You lost one life! Remaining lives: {life}")
 
 #function for difficulties in game
@@ -140,9 +140,9 @@ def func_for_diff():
     global res
     start = time.perf_counter()
     for _ in range(5):
-        n1 = random.randint(low, high)
+        n1 = random.randint(low, high) #choosing random digit between low,high
         n2 = random.randint(low, high)
-        n3 = random.randint(low, high) if b == 3 else 1
+        n3 = random.randint(low, high) if b == 3 else 1 #only working if difficulty is 3
         ask_quest(n1, n2, n3)
     end = time.perf_counter()
 
@@ -165,13 +165,13 @@ def endless_mode():
 
     while life > 0:
         if total_q < 10:
-            low, high = 1, 10      # Easy: 1–10
+            low, high = 1, 9      # Easy: 1–10
             n3 = 1                 # 2-number multiplication
         elif total_q < 30:
-            low, high = 1, 20     # Normal: 1–20
+            low, high = 1, 19     # Normal: 1–20
             n3 = 1                 # 2-number multiplication
         else:
-            low, high = 1, 20     # Hard: 1–20
+            low, high = 1, 19     # Hard: 1–20
             n3 = random.randint(low, high)  # 3-number multiplication
 
         n1 = random.randint(low, high)
@@ -189,31 +189,32 @@ def endless_mode():
 
 # --- Main ---
 while True:
-    b = input("Choose difficulty (1=easy, 2=normal, 3=hard, 4=endless): ")
+    b = input("Choose difficulty (1=easy, 2=normal, 3=hard, 4=endless): ") #choosing difficulty
 
-    if not b.isdigit():
+    if not b.isdigit(): #checking if input is digit
         print("숫자를 입력해 주세요.")
         continue
 
     b = int(b)
 
-    if b not in [1, 2, 3, 4]:
+    if b not in [1, 2, 3, 4]: #checking if input is between 1-4
         print("1,2,3,4 중에서 선택해 주세요.")
         continue
     break
 
+#actions depending on the difficulty chosen
 if b == 1:
-    low, high = 1, 10
+    low, high = 1, 9
     print_score()
     func_for_diff()
     save_score()
 elif b == 2:
-    low, high = 1, 20
+    low, high = 1, 19
     print_score()
     func_for_diff()
     save_score()
 elif b == 3:
-    low, high = 1, 20
+    low, high = 1, 19
     print_score()
     func_for_diff()
     save_score()
