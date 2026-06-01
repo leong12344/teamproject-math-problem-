@@ -147,7 +147,7 @@ def func_for_diff():
     end = time.perf_counter()
 
     if cnt == 5:
-        print("축하합니다. 면접입니다!")
+        print("축하합니다. 만점입니다!")
     elif 0 < cnt < 5:
         print(f"5문제에서 {cnt}개 맞췄습니다.")
     else:
@@ -165,13 +165,13 @@ def endless_mode():
 
     while life > 0:
         if total_q < 10:
-            low, high = 1, 9      # Easy: 1–10
+            low, high = 1, 9      # Easy: 1–9
             n3 = 1                 # 2-number multiplication
         elif total_q < 30:
-            low, high = 1, 19     # Normal: 1–20
+            low, high = 1, 19     # Normal: 1–19
             n3 = 1                 # 2-number multiplication
         else:
-            low, high = 1, 19     # Hard: 1–20
+            low, high = 1, 19     # Hard: 1–19
             n3 = random.randint(low, high)  # 3-number multiplication
 
         n1 = random.randint(low, high)
